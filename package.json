@@ -1,5 +1,5 @@
 {
-  "name": "remarkable-spoiler",
+  "name": "@quochuync/remarkable-spoiler",
   "version": "1.0.0",
   "description": "Remarkable plugin to render spoiler block",
   "main": "index.js",
