@@ -9,8 +9,3 @@ summary {
     text-align: right;
     cursor: pointer;
 }
-
-details br:first-child,
-details summary + br {
-    display: none;
-}
