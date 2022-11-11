@@ -45,4 +45,4 @@ const remarkableSpoiler = (md, config = { prefix: '! '}) => {
   }
 };
 
-export default remarkableSpoiler;
+module.exports = remarkableSpoiler;
