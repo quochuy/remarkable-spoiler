@@ -1,0 +1,23 @@
+{
+  "name": "remarkable-spoiler",
+  "version": "1.0.0",
+  "description": "Remarkable plugin to render spoiler block",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/quochuy/remarkable-spoiler.git"
+  },
+  "keywords": [
+    "remarkable",
+    "markdown",
+    "spoiler",
+    "details",
+    "summary"
+  ],
+  "author": "Quoc-Huy NGUYEN DINH",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/quochuy/remarkable-spoiler/issues"
+  },
+  "homepage": "https://github.com/quochuy/remarkable-spoiler#readme"
+}

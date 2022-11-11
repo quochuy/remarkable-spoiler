@@ -1,0 +1,16 @@
+details {
+    padding: 10px 10px;
+    outline-offset: 2px;
+    background-color: #f8f8f8;
+    outline: dotted 1px #f8f8f8;
+}
+
+summary {
+    text-align: right;
+    cursor: pointer;
+}
+
+details br:first-child,
+details summary + br {
+    display: none;
+}
