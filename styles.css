@@ -3,6 +3,7 @@ details {
     outline-offset: 2px;
     background-color: #f8f8f8;
     outline: dotted 1px #f8f8f8;
+    margin: 10px 0;
 }
 
 summary {
