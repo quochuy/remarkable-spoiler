@@ -1,28 +1,37 @@
-const remarkableSpoiler = (md, config = { prefix: '! '}) => {
-  const { prefix } = config;
-  let isSpoiler = false;
+const remarkableSpoiler = (md, config = {}) => {
+  const { prefix = '! ' , defaultRevealText = 'Reveal spoiler', revealTextMaxLength = 50 } = config;
   const originalOpenRenderer = md.renderer.rules.blockquote_open;
   const originalCloseRenderer = md.renderer.rules.blockquote_close;
   const originalInline = md.renderer.rules.text;
+  let isSpoiler = false;
+  let metadata = null;
 
-  const isSpoilerMd = (tokens, idx) => {
+  const extractSpoilerMetadata = (tokens, idx) => {
     for (let ti = idx; ti < tokens.length; ti += 1) {
       const token = tokens[ti];
 
       if (token.type === 'blockquote_close') {
-        return false;
+        return null;
       }
 
       if (token.type === 'inline' && token.content.indexOf(prefix) === 0) {
         isSpoiler = true;
-        return isSpoiler;
+        const regex = new RegExp(`${prefix}\\\[([A-Za-z0-9 ]{1,${revealTextMaxLength}}?)\\\]`);
+        const match = token.content.match(regex);
+
+        if (match) {
+          return { revealText: match[1] };
+        }
+
+        return { revealText: defaultRevealText };
       }
     }
   };
 
   md.renderer.rules.blockquote_open = (tokens, idx, options, env) => {
-    if (isSpoilerMd(tokens, idx)) {
-      return '<details><summary>Reveal spoiler</summary>';
+    metadata = extractSpoilerMetadata(tokens, idx);
+    if (metadata !== null) {
+      return `<details><summary>${metadata.revealText}</summary>`;
     }
 
     return originalOpenRenderer(tokens, idx, options, env);
@@ -31,6 +40,7 @@ const remarkableSpoiler = (md, config = { prefix: '! '}) => {
   md.renderer.rules.blockquote_close = (tokens, idx, options, env) => {
     if (isSpoiler) {
       isSpoiler = false;
+      metadata = null;
       return '</details>';
     }
 
@@ -39,7 +49,9 @@ const remarkableSpoiler = (md, config = { prefix: '! '}) => {
 
   md.renderer.rules.text = (tokens, idx, options, env) => {
     if (isSpoiler) {
-      return tokens[idx].content.replace(new RegExp(`^${prefix}`), '');
+      return tokens[idx].content
+        .replace(new RegExp(`^${prefix}\\\[${metadata.revealText}\\\] `), '')
+        .replace(new RegExp(`^${prefix}`), '');
     }
     return originalInline(tokens, idx, options, env);
   }
