@@ -23,9 +23,9 @@ The plugin will convert blockquote markdown with specified prefix into a `<detai
 
 ## Options
 ### Prefix
-By default the prefix is '! ' (exclamation mark followed by a space), to change the prefix:
+By default the prefix is '!' (exclamation mark), to change the prefix:
 ```
-md.use(RemarkableSpoiler, { prefix: '@ ' });
+md.use(RemarkableSpoiler, { prefix: '@' });
 ```
 
 ### Reveal text

@@ -1,5 +1,5 @@
 const remarkableSpoiler = (md, config = {}) => {
-  const { prefix = '! ' , defaultRevealText = 'Reveal spoiler', revealTextMaxLength = 50 } = config;
+  const { prefix = '!' , defaultRevealText = 'Reveal spoiler', revealTextMaxLength = 50 } = config;
   const originalOpenRenderer = md.renderer.rules.blockquote_open;
   const originalCloseRenderer = md.renderer.rules.blockquote_close;
   const originalInline = md.renderer.rules.text;
@@ -16,7 +16,7 @@ const remarkableSpoiler = (md, config = {}) => {
 
       if (token.type === 'inline' && token.content.indexOf(prefix) === 0) {
         isSpoiler = true;
-        const regex = new RegExp(`${prefix}\\\[([A-Za-z0-9 ]{1,${revealTextMaxLength}}?)\\\]`);
+        const regex = new RegExp(`${prefix} {0,1}\\\[([A-Za-z0-9 ?!]{1,${revealTextMaxLength}}?)\\\] {0,1}`);
         const match = token.content.match(regex);
 
         if (match) {
@@ -50,7 +50,7 @@ const remarkableSpoiler = (md, config = {}) => {
   md.renderer.rules.text = (tokens, idx, options, env) => {
     if (isSpoiler) {
       return tokens[idx].content
-        .replace(new RegExp(`^${prefix}\\\[${metadata.revealText}\\\] `), '')
+        .replace(new RegExp(`^${prefix} {0,1}\\\[${metadata.revealText}\\\] {0,1}`), '')
         .replace(new RegExp(`^${prefix}`), '');
     }
     return originalInline(tokens, idx, options, env);
