@@ -1,6 +1,6 @@
 {
   "name": "@quochuync/remarkable-spoiler",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "Remarkable plugin to render spoiler block",
   "main": "index.js",
   "repository": {
