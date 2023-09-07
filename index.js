@@ -3,8 +3,7 @@ const remarkableSpoiler = (md, config = {}) => {
   const originalOpenRenderer = md.renderer.rules.blockquote_open;
   const originalCloseRenderer = md.renderer.rules.blockquote_close;
   const originalInline = md.renderer.rules.text;
-  let isSpoiler = false;
-  let metadata = null;
+  let spoilerMetadata;
 
   const extractSpoilerMetadata = (tokens, idx) => {
     for (let ti = idx; ti < tokens.length; ti += 1) {
@@ -15,7 +14,6 @@ const remarkableSpoiler = (md, config = {}) => {
       }
 
       if (token.type === 'inline' && token.content.indexOf(prefix) === 0) {
-        isSpoiler = true;
         const regex = new RegExp(`${prefix} {0,1}\\\[([A-Za-z0-9 ?!]{1,${revealTextMaxLength}}?)\\\] {0,1}`);
         const match = token.content.match(regex);
 
@@ -26,21 +24,24 @@ const remarkableSpoiler = (md, config = {}) => {
         return { revealText: defaultRevealText };
       }
     }
+
+    return null;
   };
 
   md.renderer.rules.blockquote_open = (tokens, idx, options, env) => {
-    metadata = extractSpoilerMetadata(tokens, idx);
-    if (metadata !== null) {
-      return `<details><summary>${metadata.revealText}</summary>`;
+    if (!spoilerMetadata) {
+      spoilerMetadata = extractSpoilerMetadata(tokens, idx);
+      if (spoilerMetadata) {
+        return `<details><summary>${spoilerMetadata.revealText}</summary>`;
+      }
     }
 
     return originalOpenRenderer(tokens, idx, options, env);
   };
 
   md.renderer.rules.blockquote_close = (tokens, idx, options, env) => {
-    if (isSpoiler) {
-      isSpoiler = false;
-      metadata = null;
+    if (spoilerMetadata) {
+      spoilerMetadata = undefined;
       return '</details>';
     }
 
@@ -48,9 +49,9 @@ const remarkableSpoiler = (md, config = {}) => {
   };
 
   md.renderer.rules.text = (tokens, idx, options, env) => {
-    if (isSpoiler) {
+    if (spoilerMetadata) {
       return tokens[idx].content
-        .replace(new RegExp(`^${prefix} {0,1}\\\[${metadata.revealText}\\\] {0,1}`), '')
+        .replace(new RegExp(`^${prefix} {0,1}\\\[${spoilerMetadata.revealText}\\\] {0,1}`), '')
         .replace(new RegExp(`^${prefix}`), '');
     }
     return originalInline(tokens, idx, options, env);
